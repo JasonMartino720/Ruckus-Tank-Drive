@@ -468,6 +468,44 @@ public class Robot extends IterativeRobot
 			    	        	drive.tankDrive(0.0, 0.0, true);
 			    	        	StalkerAuto();
 			    	        }
+	        		case 6: RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
+        			
+	        		if(RobotMap.pot.get() < 0.205)
+					{
+						RobotMap.dart.set(0.6);
+					}
+					else if(RobotMap.pot.get() > 0.215)
+					{
+						RobotMap.dart.set(-0.6);
+					}
+					else
+					{
+						RobotMap.dart.set(0.0);
+						if(!Flag1)
+        				{
+        				this.arcadeDrive(0.0, 0.0, false);
+        				RobotMap.rFlywheel.set(-1.0);
+        				RobotMap.lFlywheel.set(1.0);
+        				Timer.delay(2.2);
+        				RobotMap.rFlywheel.set(-1.0);
+    					RobotMap.lFlywheel.set(1.0);
+    					RobotMap.lBelt.set(-1.0);
+    					RobotMap.rBelt.set(1.0);
+    					Timer.delay(0.5);
+    					Flag1 = true;
+        				}
+        				else
+        				{
+        				this.arcadeDrive(0.0, 0.0, false);
+        				RobotMap.flash.set(0.0);
+    					RobotMap.rFlywheel.set(0.0);
+    					RobotMap.lFlywheel.set(0.0);
+    					RobotMap.lBelt.set(0.0);
+    					RobotMap.rBelt.set(0.0);
+        				}
+					}
+	        				
+	    			break;
 	        	
 	        	}
 	      
