@@ -1,4 +1,3 @@
-//Jason is the greatest
 package org.usfirst.frc.team5030.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
