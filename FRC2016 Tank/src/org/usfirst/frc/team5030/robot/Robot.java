@@ -40,8 +40,8 @@ public class Robot extends IterativeRobot
 	static double operatorBands = 0.05; //DeadBands for Joystick
 	static double potDeadband = 0.005; //Deadband around potAngle1 to eliminate oscillation
 	final static double dis2Outerworks = 450; //Encoder distance to defenses
-	final static double totalDistance = 1800; //Encoder distance to shooting position
-	final static double lowbarDistance = 1800; //Possibly used to shoot in side goal from lowbar //TODO decide whether or not to use
+	final static double lowbarDistance = 1800; //Encoder distance to shooting position
+	final static double defenseDistance = 1400; //Possibly used to shoot in side goal from lowbar //TODO decide whether or not to use
 	final static double potAngleBatter = 0; //TODO fill variables
 	final static double potAngleLowbar = 0;
 	static boolean secondStage = false;
@@ -116,13 +116,14 @@ public class Robot extends IterativeRobot
   		//DEFENSE Sendable Chooser
   		defenseSelection = new SendableChooser();
   		defenseSelection.addDefault("Default", 0);
-  		defenseSelection.addObject("Drive Forward", 1);
+  		defenseSelection.addObject("Lowbar Driving", 1);
+  		defenseSelection.addObject("Defenses Driving", 2);
   		SmartDashboard.putData("Autonomous mode selection", defenseSelection);
   		
   		//POSITION Sendable Chooser
   		positionSelection = new SendableChooser();
   		positionSelection.addObject("Default", 0);
-  		positionSelection.addObject("1", 1);
+  		positionSelection.addObject("Lowbar", 1);
   		positionSelection.addObject("2", 2);
   		positionSelection.addObject("3", 3);
   		positionSelection.addObject("4", 4);
@@ -229,9 +230,9 @@ public class Robot extends IterativeRobot
 			        		
 	        		//PORTCULLIS 
 	        				//Driving to Outerworks
-	        		case 1:	if(lEnc < totalDistance && rEnc < totalDistance)//1507
+	        		case 1:	if(lEnc < lowbarDistance && rEnc < lowbarDistance)//1507
 	        				{
-	                			drive.tankDrive(0.5, 0.0, true);
+	                			drive.tankDrive(0.8, 0.8, true);
 	        				}
 	        				else
 	        				{
@@ -239,7 +240,16 @@ public class Robot extends IterativeRobot
 	        					drive.tankDrive(0.0, 0.0, true);
 	        					        					
 	        				}
-	        		
+	        				break;
+	        				
+	        		case 2: if(lEnc < defenseDistance && rEnc < defenseDistance)
+	        				{
+	        					drive.tankDrive(0.8, 0.8);
+	        				}
+	        				else
+	        				{
+	        					drive.tankDrive(0.0, 0.0);
+	        				}
 	        		break;
 	        		
 	        				
@@ -263,7 +273,7 @@ public class Robot extends IterativeRobot
 			        		OI.DriverStick.setRumble(RumbleType.kRightRumble, (float)0.0);
 	        		
 			        		//CW turn
-	        		case 1: if(lEnc < totalDistance + 200)
+	        		case 1: if(lEnc < lowbarDistance + 200)
 	        				{
 	        					drive.tankDrive(0.5, 0.0);
 			    	        }
@@ -321,7 +331,7 @@ public class Robot extends IterativeRobot
 	        				}
 	        				break;
 	        				//CW Turn
-	        		case 2: if(lEnc < totalDistance + 150)
+	        		case 2: if(lEnc < defenseDistance + 150)
 	        				{
 	        					drive.tankDrive(0.35, 0.0);
 	        				}
@@ -367,7 +377,7 @@ public class Robot extends IterativeRobot
 	        				}
 	        				break;
 	        				//CW Turn
-	        		case 3: if(lEnc < 100)
+	        		case 3: if(lEnc < defenseDistance + 100)
 	        				{
 	        					drive.tankDrive(0.35 , 0.0);
 	        				}
@@ -413,7 +423,7 @@ public class Robot extends IterativeRobot
 	        				}
 	        				break;
 	        				//CCW Turn
-	        		case 4: if(rEnc < 100)
+	        		case 4: if(rEnc < defenseDistance + 100)
 	        				{
 	        					drive.tankDrive(0.0, 0.35);
 	        				}
@@ -459,7 +469,7 @@ public class Robot extends IterativeRobot
 	        				}
 	        				break;
 	        				//CCW Turn
-	        		case 5: if(rEnc < 100)
+	        		case 5: if(rEnc < defenseDistance + 100)
 	        				{
     							drive.tankDrive(0.0, 0.35);
 	        				}
