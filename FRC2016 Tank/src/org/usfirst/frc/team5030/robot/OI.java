@@ -25,7 +25,7 @@ public class OI
 		static Button intakeActDown = new JoystickButton(OperatorStick, 2);//intake down
 		static Button intakeIn = new JoystickButton(OperatorStick, 6);
 		static Button intakeOut = new JoystickButton(OperatorStick, 5);
-		static Button activateStalker = new JoystickButton(OperatorStick, 3);
+		static Button lowGoal = new JoystickButton(OperatorStick, 3);
 		static Button dartPosBatter = new JoystickButton(OperatorStick , 8);
 		static Button oFlash = new JoystickButton(OperatorStick, 1);
 		

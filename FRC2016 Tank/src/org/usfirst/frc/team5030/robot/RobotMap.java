@@ -90,4 +90,5 @@ public class RobotMap
 		static Potentiometer pot;//Potentiometer on DART linear actuator
 		static Encoder leftEnc;
 		static Encoder rightEnc;
+		static DigitalInput middleHall;
 }

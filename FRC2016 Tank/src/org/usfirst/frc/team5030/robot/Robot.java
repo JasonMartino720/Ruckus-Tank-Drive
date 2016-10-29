@@ -1,3 +1,4 @@
+//Jason is the greatest
 package org.usfirst.frc.team5030.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -47,6 +48,7 @@ public class Robot extends IterativeRobot
 	static boolean secondStage = false;
 	static boolean visionFinished = false;
 	static boolean autoShotTaken = false;
+	static boolean Flag1 = false;
 	static int defenseSelected;
 	static int positionSelected;
 	static int operatorButtonID;
@@ -88,9 +90,10 @@ public class Robot extends IterativeRobot
 		RobotMap.leftLimit = new DigitalInput(7);
 		RobotMap.rightLimit = new DigitalInput(4);
 		RobotMap.actLimit = new DigitalInput(6);
+		RobotMap.middleHall = new DigitalInput(69); //TODO placeholder
 		
 		//Create Analog UltraSonic
-		RobotMap.ultrasonic = new AnalogInput(2);
+		//RobotMap.ultrasonic = new AnalogInput(2);
 		
 		//Create Analog Pot
 		AnalogInput potInput = new AnalogInput(3);
@@ -101,11 +104,11 @@ public class Robot extends IterativeRobot
 		RobotMap.rightEnc = new Encoder(0,1,false, Encoder.EncodingType.k4X);
         
 		//Camera for DS
-		CameraServer cam = CameraServer.getInstance();	
+		//CameraServer cam = CameraServer.getInstance();	
 		
 		//Create & Start Camera
-  		cam.setQuality(100);							
-  		cam.startAutomaticCapture("cam0");				
+  		//cam.setQuality(100);							
+  		//cam.startAutomaticCapture("cam0");				
   		autonomousCommand = new ExampleCommand();
   		
   		//Create and determine Network Table
@@ -114,14 +117,7 @@ public class Robot extends IterativeRobot
   		//DEFENSE Sendable Chooser
   		defenseSelection = new SendableChooser();
   		defenseSelection.addDefault("Default", 0);
-  		defenseSelection.addObject("Portcullis", 1);
-  		defenseSelection.addObject("Cheval de Frise", 2);
-  		defenseSelection.addObject("Moat", 3);
-  		defenseSelection.addObject("Rockwall", 4);
-  		defenseSelection.addObject("Rough Terrain", 5);
-  		defenseSelection.addObject("Ramparts", 6);
-  		defenseSelection.addObject("Lowbar" , 7);
-  		defenseSelection.addObject("Lowbar from Corner" , 8);
+  		defenseSelection.addObject("Drive Forward", 1);
   		SmartDashboard.putData("Autonomous mode selection", defenseSelection);
   		
   		//POSITION Sendable Chooser
@@ -152,6 +148,7 @@ public class Robot extends IterativeRobot
         
         
         //Decide which start function to use based on defense selected
+        /*
         if(defenseSelected == 0)
         {
         	
@@ -176,7 +173,8 @@ public class Robot extends IterativeRobot
         {
         	defenseAutoStart();
         }
-        
+        */
+        lowbarAutoStart();
         
         	
     }
@@ -232,168 +230,19 @@ public class Robot extends IterativeRobot
 			        		
 	        		//PORTCULLIS 
 	        				//Driving to Outerworks
-	        		case 1:	if(lEnc < dis2Outerworks && rEnc < dis2Outerworks)//1507
+	        		case 1:	if(lEnc < totalDistance && rEnc < totalDistance)//1507
 	        				{
 	                			drive.tankDrive(0.5, 0.0, true);
 	        				}
 	        				else
 	        				{
-	        					//Stop wheels quickly, Bring up manipulator and drive forward to seat gate on fins
-	        					drive.tankDrive(0.0, 0.0, true);
-	        					Timer.delay(0.25);
-	        					RobotMap.man.set(-0.5);
-	        					drive.tankDrive(1.0, 0.0, true);
-	        					Timer.delay(1.0);
-	        					drive.tankDrive(0.0, 0.0, true);
-	        					RobotMap.man.set(0.0);
-	        						
-	        						//Drive Remaining Distance @ half speed
-		        					if(lEnc < 1800 && rEnc < 1800)
-		        					{
-		        						drive.tankDrive(0.5, 0.0, true);
-		        					}
-		        					else
-		        					{
-		        						//Stop wheels and bring down manipulator
-		        						drive.tankDrive(0.0, 0.0, true);
-		        						RobotMap.man.set(0.5);
-		        						Timer.delay(0.5);
-		        						RobotMap.man.set(0.0);
-		        						
-		        						//Pass to position based stage
-		        						secondStage = true;
-		        					}
-		        					
-	        				}
-	        		
-	        		break;
-	        		
-	        		//Cheval
-	        				//Drive Forward
-	        		case 2: if(lEnc < dis2Outerworks && rEnc < dis2Outerworks)
-	        				{
-	        					drive.tankDrive(0.5, 0.0, true);
-	        				}
-	        				else
-	        				{
-	        					//Bring down Defense Arm
-	        					drive.tankDrive(0.0, 0.0, true);
-	        					RobotMap.man.set(0.5);
-	        					Timer.delay(1.5);
-	        					RobotMap.man.set(0.0);
-	        						
-	        						//Complete drive forward
-		        					if(lEnc < 1800 && rEnc < 1800)
-		        					{
-		        						drive.tankDrive(0.5, 0.0, true);
-		        					}
-		        					else
-		        					{
-		        						//Stop wheels
-		        						drive.tankDrive(0.0, 0.0, true);
-		        						
-		        						//Pass to position based stage
-		        						secondStage = true;
-		        					}
 	        					
-	        				}
-	        		break;
-	        		
-	        		//Moat
-	        				//Drive Forward
-	        		case 3: if(lEnc < totalDistance && rEnc < totalDistance)
-			        		{
-			        			drive.tankDrive(1.0, 0.0, true);
-			        		}
-	        				else
-	        				{
 	        					drive.tankDrive(0.0, 0.0, true);
-	        					
-	        					//Pass to position based stage
-	        					secondStage = true;
+	        					        					
 	        				}
+	        		
 	        		break;
 	        		
-	        		//Rockwall
-	        				//Drive Forward
-	        		case 4: if(lEnc < totalDistance && rEnc < totalDistance)
-			        		{
-			        			drive.tankDrive(1.0, 0.0, true);
-			        		}
-							else
-							{
-								drive.tankDrive(0.0, 0.0, true);
-								//Pass to position based stage
-								secondStage = true;
-							}
-	        		break;
-	        		
-	        		//Rough Terrain
-	        				//Drive Forward
-	        		case 5: if(lEnc < totalDistance && rEnc < totalDistance)
-			        		{
-			        			drive.tankDrive(1.0, 0.0, true);
-			        		}
-							else
-							{
-								drive.tankDrive(0.0, 0.0, true);
-								//Pass to position based stage
-								secondStage = true;
-							}
-	        		break;
-	        		
-	        		//Ramparts
-	        				//Drive Forward
-	        		case 6: if(lEnc < totalDistance && rEnc < totalDistance)
-			        		{
-			        			drive.tankDrive(1.0, 0.0, true);
-			        		}
-							else
-							{
-								drive.tankDrive(0.0, 0.0, true);
-								//Pass to position based stage
-								secondStage = true;
-							}
-	        		break;
-	        		
-	        		//Lowbar
-	        				//Drive Forward
-	        		case 7: if(lEnc < lowbarDistance && rEnc < lowbarDistance)
-			        		{
-			        			drive.tankDrive(1.0, 0.0, true);
-			        		}
-							else
-							{
-								drive.tankDrive(0.0, 0.0, true);
-								//Pass to position based stage
-								secondStage = true;
-							}
-	        		break; 
-	        		
-	        				//Lowbar from corner
-	        		case 8: RobotMap.rFlywheel.set(-1.0);
-	        				RobotMap.lFlywheel.set(1.0);
-	        				Timer.delay(2);
-	        				
-	        				RobotMap.rBelt.set(1.0);
-	        				RobotMap.lBelt.set(-1.0);
-	        				Timer.delay(0.75);
-	        				
-	        				RobotMap.lBelt.set(0.0);
-	        				RobotMap.rBelt.set(0.0);
-	        				RobotMap.lFlywheel.set(0.0);
-	         				RobotMap.rFlywheel.set(0.0);
-	        				
-	        				if(lEnc < 600 && rEnc < 600)
-	        				{
-	        					drive.tankDrive(0.5, 0.0, true);
-	        				}
-	        				else
-	        				{
-	        					drive.tankDrive(0.0, 0.0, true);
-	        					
-	        					//if(rEnc < )
-	        				}
 	        				
 	        	}
 		        
@@ -415,98 +264,251 @@ public class Robot extends IterativeRobot
 			        		OI.DriverStick.setRumble(RumbleType.kRightRumble, (float)0.0);
 	        		
 			        		//CW turn
-	        		case 1: if(table.getNumber("COG_Y" , -1.0) < 1)
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.25, true);
+	        		case 1: if(lEnc < totalDistance + 200)
+	        				{
+	        					drive.tankDrive(0.5, 0.0);
 			    	        }
-			    	        else
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.0, true);
-			    	        	StalkerAuto();
-			    	        }
-	        				
+	        				else
+	        				{
+	        					drive.tankDrive(0.0, 0.0);
+//Code for Middle Hall if necessary
+/*
+ if(!RobotMap.middleHall.get())
+ {
+	 RobotMap.dart.set(0.6);
+ }
+ else
+ {
+	 RobotMap.dart.set(0.0);
+ 	IN HERE GOES EVERYTHING FROM 
+ 	ROBOTMAP.FLASH TO THE END
+ */
+	        					RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
+	                			
+	        	        		if(RobotMap.pot.get() < 0.205)
+	        					{
+	        						RobotMap.dart.set(0.6);
+	        					}
+	        					else if(RobotMap.pot.get() > 0.215)
+	        					{
+	        						RobotMap.dart.set(-0.6);
+	        					}
+	        					else
+	        					{
+	        						RobotMap.dart.set(0.0);
+	        						if(!Flag1)
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.rFlywheel.set(-1.0);
+	                				RobotMap.lFlywheel.set(1.0);
+	                				Timer.delay(2.2);
+	                				RobotMap.rFlywheel.set(-1.0);
+	            					RobotMap.lFlywheel.set(1.0);
+	            					RobotMap.lBelt.set(-1.0);
+	            					RobotMap.rBelt.set(1.0);
+	            					Timer.delay(0.5);
+	            					Flag1 = true;
+	                				}
+	                				else
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.flash.set(0.0);
+	            					RobotMap.rFlywheel.set(0.0);
+	            					RobotMap.lFlywheel.set(0.0);
+	            					RobotMap.lBelt.set(0.0);
+	            					RobotMap.rBelt.set(0.0);
+	                				}
+	        					}
+	        				}
+	        				break;
 	        				//CW Turn
-	        		case 2: if(table.getNumber("COG_Y" , -1.0) < 1)
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.25, true);
-			    	        }
-			    	        else
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.0, true);
-			    	        	StalkerAuto();
-			    	        }
-	        	
+	        		case 2: if(lEnc < totalDistance + 150)
+	        				{
+	        					drive.tankDrive(0.35, 0.0);
+	        				}
+	        				else
+	        				{
+	        					drive.tankDrive(0.0, 0.0);
+	        					RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
+	                			
+	        	        		if(RobotMap.pot.get() < 0.205)
+	        					{
+	        						RobotMap.dart.set(0.6);
+	        					}
+	        					else if(RobotMap.pot.get() > 0.215)
+	        					{
+	        						RobotMap.dart.set(-0.6);
+	        					}
+	        					else
+	        					{
+	        						RobotMap.dart.set(0.0);
+	        						if(!Flag1)
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.rFlywheel.set(-1.0);
+	                				RobotMap.lFlywheel.set(1.0);
+	                				Timer.delay(2.2);
+	                				RobotMap.rFlywheel.set(-1.0);
+	            					RobotMap.lFlywheel.set(1.0);
+	            					RobotMap.lBelt.set(-1.0);
+	            					RobotMap.rBelt.set(1.0);
+	            					Timer.delay(0.5);
+	            					Flag1 = true;
+	                				}
+	                				else
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.flash.set(0.0);
+	            					RobotMap.rFlywheel.set(0.0);
+	            					RobotMap.lFlywheel.set(0.0);
+	            					RobotMap.lBelt.set(0.0);
+	            					RobotMap.rBelt.set(0.0);
+	                				}
+	        					}
+	        				}
+	        				break;
 	        				//CW Turn
-	        		case 3: if(table.getNumber("COG_Y" , -1.0) < 1)
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.25, true);
-			    	        }
-			    	        else
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.0, true);
-			    	        	StalkerAuto();
-			    	        }
-	        				
+	        		case 3: if(lEnc < 100)
+	        				{
+	        					drive.tankDrive(0.35 , 0.0);
+	        				}
+	        				else
+	        				{
+	        					drive.tankDrive(0.0, 0.0);
+	        					RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
+	                			
+	        	        		if(RobotMap.pot.get() < 0.205)
+	        					{
+	        						RobotMap.dart.set(0.6);
+	        					}
+	        					else if(RobotMap.pot.get() > 0.215)
+	        					{
+	        						RobotMap.dart.set(-0.6);
+	        					}
+	        					else
+	        					{
+	        						RobotMap.dart.set(0.0);
+	        						if(!Flag1)
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.rFlywheel.set(-1.0);
+	                				RobotMap.lFlywheel.set(1.0);
+	                				Timer.delay(2.2);
+	                				RobotMap.rFlywheel.set(-1.0);
+	            					RobotMap.lFlywheel.set(1.0);
+	            					RobotMap.lBelt.set(-1.0);
+	            					RobotMap.rBelt.set(1.0);
+	            					Timer.delay(0.5);
+	            					Flag1 = true;
+	                				}
+	                				else
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.flash.set(0.0);
+	            					RobotMap.rFlywheel.set(0.0);
+	            					RobotMap.lFlywheel.set(0.0);
+	            					RobotMap.lBelt.set(0.0);
+	            					RobotMap.rBelt.set(0.0);
+	                				}
+	        					}
+	        				}
+	        				break;
 	        				//CCW Turn
-	        		case 4: if(table.getNumber("COG_Y" , -1.0) < 1)
-			    	        {
-			    	        	drive.tankDrive(0.0, -0.25, true);
-			    	        }
-			    	        else
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.0, true);
-			    	        	StalkerAuto();
-			    	        }
-	        		
+	        		case 4: if(rEnc < 100)
+	        				{
+	        					drive.tankDrive(0.0, 0.35);
+	        				}
+	        				else
+	        				{
+	        					drive.tankDrive(0.0, 0.0);
+	        					RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
+	                			
+	        	        		if(RobotMap.pot.get() < 0.205)
+	        					{
+	        						RobotMap.dart.set(0.6);
+	        					}
+	        					else if(RobotMap.pot.get() > 0.215)
+	        					{
+	        						RobotMap.dart.set(-0.6);
+	        					}
+	        					else
+	        					{
+	        						RobotMap.dart.set(0.0);
+	        						if(!Flag1)
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.rFlywheel.set(-1.0);
+	                				RobotMap.lFlywheel.set(1.0);
+	                				Timer.delay(2.2);
+	                				RobotMap.rFlywheel.set(-1.0);
+	            					RobotMap.lFlywheel.set(1.0);
+	            					RobotMap.lBelt.set(-1.0);
+	            					RobotMap.rBelt.set(1.0);
+	            					Timer.delay(0.5);
+	            					Flag1 = true;
+	                				}
+	                				else
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.flash.set(0.0);
+	            					RobotMap.rFlywheel.set(0.0);
+	            					RobotMap.lFlywheel.set(0.0);
+	            					RobotMap.lBelt.set(0.0);
+	            					RobotMap.rBelt.set(0.0);
+	                				}
+	        					}
+	        				}
+	        				break;
 	        				//CCW Turn
-	        		case 5: if(table.getNumber("COG_Y" , -1.0) < 1)
-			    	        {
-			    	        	drive.tankDrive(0.0, -0.25, true);
-			    	        }
-			    	        else
-			    	        {
-			    	        	drive.tankDrive(0.0, 0.0, true);
-			    	        	StalkerAuto();
-			    	        }
-	        		case 6: RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
-        			
-	        		if(RobotMap.pot.get() < 0.205)
-					{
-						RobotMap.dart.set(0.6);
-					}
-					else if(RobotMap.pot.get() > 0.215)
-					{
-						RobotMap.dart.set(-0.6);
-					}
-					else
-					{
-						RobotMap.dart.set(0.0);
-						if(!Flag1)
-        				{
-        				this.arcadeDrive(0.0, 0.0, false);
-        				RobotMap.rFlywheel.set(-1.0);
-        				RobotMap.lFlywheel.set(1.0);
-        				Timer.delay(2.2);
-        				RobotMap.rFlywheel.set(-1.0);
-    					RobotMap.lFlywheel.set(1.0);
-    					RobotMap.lBelt.set(-1.0);
-    					RobotMap.rBelt.set(1.0);
-    					Timer.delay(0.5);
-    					Flag1 = true;
-        				}
-        				else
-        				{
-        				this.arcadeDrive(0.0, 0.0, false);
-        				RobotMap.flash.set(0.0);
-    					RobotMap.rFlywheel.set(0.0);
-    					RobotMap.lFlywheel.set(0.0);
-    					RobotMap.lBelt.set(0.0);
-    					RobotMap.rBelt.set(0.0);
-        				}
-					}
-	        				
-	    			break;
-	        	
+	        		case 5: if(rEnc < 100)
+	        				{
+    							drive.tankDrive(0.0, 0.35);
+	        				}
+	        				else
+	        				{
+	        					drive.tankDrive(0.0, 0.0);
+	        					RobotMap.flash.set( 6 / ControllerPower.getInputVoltage()); 
+	                			
+	        	        		if(RobotMap.pot.get() < 0.205)
+	        					{
+	        						RobotMap.dart.set(0.6);
+	        					}
+	        					else if(RobotMap.pot.get() > 0.215)
+	        					{
+	        						RobotMap.dart.set(-0.6);
+	        					}
+	        					else
+	        					{
+	        						RobotMap.dart.set(0.0);
+	        						if(!Flag1)
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.rFlywheel.set(-1.0);
+	                				RobotMap.lFlywheel.set(1.0);
+	                				Timer.delay(2.2);
+	                				RobotMap.rFlywheel.set(-1.0);
+	            					RobotMap.lFlywheel.set(1.0);
+	            					RobotMap.lBelt.set(-1.0);
+	            					RobotMap.rBelt.set(1.0);
+	            					Timer.delay(0.5);
+	            					Flag1 = true;
+	                				}
+	                				else
+	                				{
+	                				drive.tankDrive(0.0, 0.0);
+	                				RobotMap.flash.set(0.0);
+	            					RobotMap.rFlywheel.set(0.0);
+	            					RobotMap.lFlywheel.set(0.0);
+	            					RobotMap.lBelt.set(0.0);
+	            					RobotMap.rBelt.set(0.0);
+	                				}
+	        					}
+	        				}
+    						break;
+    					
+	        		default:
+	        			drive.tankDrive(0.0, 0.0);
+	        			break;
 	        	}
 	      
 	        }
@@ -538,9 +540,7 @@ public class Robot extends IterativeRobot
         //double CogX = table.getNumber("COG_X" , -1.0);
     	//double CogY = table.getNumber("COG_Y" , -1.0);)
         
-        System.out.println("Ultrasonic Value " + RobotMap.ultrasonic.getVoltage());
-        
-		
+        		
     	if(!RobotMap.leftLimit.get() || !RobotMap.rightLimit.get())
     	{
     		SmartDashboard.putBoolean("Intake" , true);
@@ -548,15 +548,6 @@ public class Robot extends IterativeRobot
     	else
     	{
     		SmartDashboard.putBoolean("Intake", false);
-    	}
-    	
-    	if(RobotMap.ultrasonic.getVoltage() < 36)
-    	{
-    		SmartDashboard.putBoolean("Ultrasonic", true);
-    	}
-    	else
-    	{
-    		SmartDashboard.putBoolean("Ultrasonic", false);
     	}
     	
     	if(visionFinished == true)
@@ -572,7 +563,7 @@ public class Robot extends IterativeRobot
     	{
     		operatorButtonID = 1;
     	}
-    		else if(OI.activateStalker.get())
+    		else if(OI.lowGoal.get())
     		{
     			operatorButtonID = 2;
     		}
@@ -646,27 +637,27 @@ public class Robot extends IterativeRobot
     				RobotMap.lFlywheel.set(1.0);
     				RobotMap.lBelt.set(-1.0);
     				RobotMap.rBelt.set(1.0);
-    				
-					break;
+    				break;
 	    		
-    		case 2: if(OI.activateStalker.get())
-    				{
-    				Stalker();
-    				}
+    		case 2: RobotMap.rFlywheel.set(0.3);
+					RobotMap.lFlywheel.set(0.3);
+					RobotMap.lBelt.set(-0.3);
+					RobotMap.rBelt.set(0.3);
+					break;
     				
     		case 3: if(!RobotMap.leftLimit.get() ||  !RobotMap.rightLimit.get())
 					{	
 						RobotMap.intake.set(0.0);
 						RobotMap.rBelt.set(0.0);
 						RobotMap.lBelt.set(0.0);
-				//System.out.println("BBBBB");
+				
 					}
 					else
 					{
 						RobotMap.intake.set(-1.0);
 						RobotMap.rBelt.set(0.30);
 						RobotMap.lBelt.set(-0.30);
-				//System.out.println("CCCCC");
+				
 					}
     				break;
     		
@@ -811,13 +802,16 @@ public class Robot extends IterativeRobot
         {
         	RobotMap.dart.set(-dartValue);
         }
+        /*
         if(OI.activateStalker.get())
         {
         	//System.out.println(Stalker());
         	Stalker();
         }
+        */
     }
     
+    /*
     public boolean StalkerAuto()
     {
     	double CogX = table.getNumber("COG_X" , -1.0);
@@ -982,7 +976,7 @@ public class Robot extends IterativeRobot
     	}
     	return false;
     }
-    
+    */
    /* 
     public void tankdrive.tankDrive(double leftValue, double rightValue, boolean squaredInputs) {
         // local variables to hold the computed PWM values for the motors
